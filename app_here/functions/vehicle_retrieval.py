@@ -1,6 +1,6 @@
 import pandas as pd
 from shapely.geometry import Polygon
-from app_here.utilities.map_info.json_map_data import polys
+from app_here.utilities.map_info.json_map_data import polys, county_names
 import math
 
 def pipeline_model(df, obs):
