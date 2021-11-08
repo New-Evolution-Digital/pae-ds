@@ -20,7 +20,7 @@ layout = html.Div(children=[
                  html.Div(
                      html.H6(children="Latitude:")
                  ),
-                 dcc.Input(id="lat_dd", placeholder='enter here', type="number"),
+                 dcc.Input(id="lat_dd", placeholder='enter here', type="number", value=40.28),
                  html.Br(),
                  html.P(id="output")
              ]),
@@ -29,7 +29,7 @@ layout = html.Div(children=[
                  html.Div(
                      html.H6(children="Longitude:")
                  ),
-                 dcc.Input(id="long_dd", placeholder='numer_here', type="number"),
+                 dcc.Input(id="long_dd", placeholder='numer_here', type="number", value=-89.39),
                  html.Br(),
                  html.P(id="output")
              ]),
