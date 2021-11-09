@@ -9,3 +9,7 @@ The api endpoit is not completely functional... It requires the main function un
 its current location.
 
 Neither test app or api endpoint will function without an apporpriate dataset.
+
+Instructions for launching test-app
+- change directory to  /test_app/
+- execute uvicorn app:app
