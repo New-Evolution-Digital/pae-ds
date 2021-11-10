@@ -6,9 +6,9 @@ from test_app.mapping_funcs_and_data.map_functions import create_map, find_inter
 from app import app
 
 
-df = pd.read_csv('<csv_here>')
-center_lat = df['latitude'].sum() / len(df)
-center_long = df['longitude'].sum() / len(df)
+df = pd.read_csv('modified_csv')
+center_lat = df['lat'].sum() / len(df)
+center_long = df['long'].sum() / len(df)
 
 layout = html.Div(children=[
 
@@ -17,7 +17,7 @@ layout = html.Div(children=[
                  html.Div(
                      html.H6(children="Latitude:")
                  ),
-                 dcc.Input(id="lat_dd", placeholder='enter here', type="number"),
+                 dcc.Input(id="lat_dd", placeholder='enter here', type="number", value=40.28),
                  html.Br(),
                  html.P(id="output")
              ]),
@@ -26,7 +26,7 @@ layout = html.Div(children=[
                  html.Div(
                      html.H6(children="Longitude:")
                  ),
-                 dcc.Input(id="long_dd", placeholder='numer_here', type="number"),
+                 dcc.Input(id="long_dd", placeholder='numer_here', type="number", value=-89.39),
                  html.Br(),
                  html.P(id="output")
              ]),
@@ -52,11 +52,11 @@ layout = html.Div(children=[
 def find_listings(n_clicks, lat_dd, long_dd):
     max_dist = 15 * n_clicks
     index_directory = []
-    intersect = find_intersecting_counties(lat_dd, long_dd, max_dist)
+    intersect, circle = find_intersecting_counties(lat_dd, long_dd, max_dist)
     for i in range(len(df)):
-        if df.iloc[i]['county_name'] in intersect:
+        if df.iloc[i]['county'] in intersect:
             index_directory.append(i)
     df_to_show = df.iloc[index_directory]
-    figure = create_map( df_to_show, lat_dd, long_dd, max_dist)
+    figure = create_map( df_to_show, lat_dd, long_dd, circle)
 
     return figure

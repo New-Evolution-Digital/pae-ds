@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+test_app/modified_csv
 # C extensions
 *.so
 
@@ -128,5 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Pycharm files
-.idea/
+#random data
+data/data_creation_experiments.ipynb

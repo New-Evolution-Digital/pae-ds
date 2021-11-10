@@ -22,19 +22,19 @@ for i, x in enumerate(topojson['objects']['cb_2015_illinois_county_20m']['geomet
             temp = []
             y = abs(y + 1)
             arc_ind = beta[y].copy()
-            ref = 2*np.array(arc_ind[0])
+            ref = np.array(arc_ind[0])
             temp.append(ref)
             for j in range(1, len(arc_ind)):
-                ref = ref + (2*np.array(arc_ind[j]))
+                ref = ref + (np.array(arc_ind[j]))
                 temp.append(ref)
             for zed in reversed(temp):
                 poly_shape.append(zed)
         else:
             arc_ind = beta[y].copy()
-            ref = 2*np.array(arc_ind[0])
+            ref = np.array(arc_ind[0])
             poly_shape.append(ref)
             for j in range(1, len(arc_ind)):
-                ref = ref + (2*np.array(arc_ind[j]))
+                ref = ref + (np.array(arc_ind[j]))
                 poly_shape.append(ref)
     shape_final = Polygon(poly_shape)
     polys.append(shape_final)
