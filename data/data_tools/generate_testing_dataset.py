@@ -3,6 +3,12 @@ import random
 import pandas as pd
 import numpy as np
 import string
+
+max_lat = 46.021286
+min_lat = 41.961025
+min_lon = -124.149018
+max_lon = -116.633569
+
 conditions = ["new", "good", "fair", "poor", "parts"]
 models = ["model 1", "model 2", "model 3", "model 4", "model a", "model b", "model c"]
 labels = [
@@ -60230,7 +60236,11 @@ df["odometer"] = np.random.normal(20000, 15000, 1000)
 df["title_status"] = random.choices(["clean", None, "salvage"], k=1000)
 df["transmission"] = random.choices(["automatic", "other"], k=1000)
 df["VIN"] = list({ ''.join(random.choices(VIN_Bits,k=20)) for _ in range (1000) })
+df["lat"] = [random.random()*(max_lat-min_lat)+min_lat for _ in range(1000)]
+df["lon"] = [random.random()*(max_lon-min_lon)+min_lat for _ in range(1000)]
 
-print(df["VIN"].head(100))
+
+
+# print(df["lat"].head(100))
 # draw 10000 samples from distribution with mean 25 and std dev 5
 # s = np.random.normal(25, 5, 1000)

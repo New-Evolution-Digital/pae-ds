@@ -2,14 +2,15 @@ from dash import dcc
 from dash import html
 import numpy as np
 import pandas as pd
+from data.data_tools.generate_testing_dataset import df
 from dash.dependencies import Input, Output, State
 from test_app.mapping_funcs_and_data.map_functions import create_map
 from app import app
 
 
-df = pd.read_csv('modified_csv')
+#df = pd.read_csv('modified_csv')
 center_lat = df['lat'].sum() / len(df)
-center_long = df['long'].sum() / len(df)
+center_long = df['lon'].sum() / len(df)
 print(center_lat)
 print(center_long)
 

@@ -1,14 +1,16 @@
 from dash import dcc
 from dash import html
+from data.data_tools.generate_testing_dataset import df
 import pandas as pd
 from dash.dependencies import Input, Output, State
 from test_app.mapping_funcs_and_data.map_functions import create_map, find_intersecting_counties
 from app import app
 
 
-df = pd.read_csv('modified_csv')
+#df = pd.read_csv('modified_csv')
+
 center_lat = df['lat'].sum() / len(df)
-center_long = df['long'].sum() / len(df)
+center_long = df['lon'].sum() / len(df)
 
 layout = html.Div(children=[
 
