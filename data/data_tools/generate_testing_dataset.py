@@ -60215,7 +60215,7 @@ Toto Creek
 Toto's Meadow
 """
 or_regions = or_regions.splitlines()
-manufacturers = ["ford", "chevrolet", "mazda", "dodge"]
+manufacturers = ["ford", "chevrolet", "mazda", "dodge", "toyota", '']
 df = pd.DataFrame(columns=labels)
 df["id"] = np.random.randint(1e9, 2e9, 1000)
 df["region"] = random.choices(or_regions, k=1000)
