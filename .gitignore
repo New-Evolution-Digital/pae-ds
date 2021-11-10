@@ -128,5 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Pycharm files
-.idea/
+#random data
+data/data_creation_experiments.ipynb
