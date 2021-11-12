@@ -8,8 +8,8 @@ its built using Dash app and currently demonstrates a simple radius search and a
 The api endpoit is not completely functional... It requires the main function under api/functions/vehicle retrieval to be slightly rewritten for
 its current location.
 
-Neither test app or api endpoint will function without an apporpriate dataset.
+Initial integration of test dataset started
 
-Instructions for launching test-app
-- change directory to  /test_app/
-- execute uvicorn app:app
+Instructions for launching:
+- run.py 
+- main.py
