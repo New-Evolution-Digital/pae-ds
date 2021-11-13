@@ -10,36 +10,33 @@ min_lon = -124.149018
 max_lon = -116.633569
 
 conditions = ["new", "good", "fair", "poor", "parts"]
-models = ["model 1", "model 2", "model 3", "model 4", "model a", "model b", "model c"]
+drive = ['four wheel drive', 'rear wheel drive', 'front wheel drive']
+manufacturers = ["ford", "chevrolet", "mazda", "dodge", "toyota", 'mitsubishi', 'tesla', 'bmw', 'audi']
+transmission = ['automatic', 'manual']
+type = ['sedan', 'suv', 'coupe', 'pickup', 'minivan', 'other']
+fuel = ['gas', 'electric', 'diesel', 'other']
+color = ['red', 'blue', 'green', 'purple', 'orange', 'black', 'silver', 'yellow', 'cobalt', 'crimson']
 labels = [
     "id",
-    "url",
-    "region",
-    "region_url",
     "price",
     "year",
+    "region",
     "manufacturer",
-    "model",
     "condition",
     "cylinders",
     "fuel",
     "odometer",
-    "title_status",
     "transmission",
     "VIN",
     "drive",
-    "size",
     "type",
     "paint_color",
     "image_url",
-    "description",
-    "county",
-    "state",
+    "title_status",
     "lat",
     "long",
-    "posting_date",
 ]
-VIN_Bits = list(string.ascii_lowercase) +["0","1","2","3","4","5","6","7","8","9"]
+VIN_Bits = list(string.ascii_lowercase) + ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 or_regions = """Agate Flat
 Beaver Basin
 Camp Creek
@@ -60221,25 +60218,25 @@ Toto Creek
 Toto's Meadow
 """
 or_regions = or_regions.splitlines()
-manufacturers = ["ford", "chevrolet", "mazda", "dodge", "toyota", '']
+k = 1000
 df = pd.DataFrame(columns=labels)
-df["id"] = np.random.randint(1e9, 2e9, 1000)
-df["region"] = random.choices(or_regions, k=1000)
-df["price"] = np.random.normal(8000, 4000, 1000)
-df["year"] = np.random.normal(2000, 21, 1000)
-df["manufacturer"] = random.choices(manufacturers, k=1000)
-df["model"] = random.choices(models, k=1000)
-df["condition"] = random.choices(conditions, k=1000)
-df["cylinders"] = [i + "cylinders" for i in random.choices(["4", "6", "8"], k=1000)]
-df["fuel"] = random.choices(["gas", "other"], k=1000)
-df["odometer"] = np.random.normal(20000, 15000, 1000)
-df["title_status"] = random.choices(["clean", None, "salvage"], k=1000)
-df["transmission"] = random.choices(["automatic", "other"], k=1000)
-df["VIN"] = list({ ''.join(random.choices(VIN_Bits,k=20)) for _ in range (1000) })
-df["lat"] = [random.random()*(max_lat-min_lat)+min_lat for _ in range(1000)]
-df["lon"] = [random.random()*(max_lon-min_lon)+min_lat for _ in range(1000)]
-
-
+df["id"] = np.random.randint(1e9, 2e9, k)
+df["region"] = random.choices(or_regions, k=k)
+df["price"] = [x if x >= 1500 else 1500 for x in np.random.normal(16000, 4000, k)]
+df["year"] = [round(x) for x in np.random.normal(2010, 5, k)]
+df["manufacturer"] = random.choices(manufacturers, k=k)
+df['type'] = random.choices(type, k=k)
+df["condition"] = random.choices(conditions, k=k)
+df["cylinders"] = [i + " cylinders" for i in random.choices(["4", "6", "8"], k=k)]
+df["fuel"] = random.choices(fuel, k=k)
+df["odometer"] = [x if x >= 0 else 0 for x in np.random.normal(20000, 15000, k)]
+df['drive'] = random.choices(drive, k=k)
+df["title_status"] = random.choices(["clean", None, "salvage"], k=k)
+df["transmission"] = random.choices(transmission, k=k)
+df["VIN"] = list({''.join(random.choices(VIN_Bits, k=20)) for _ in range(k)})
+df["lat"] = [random.random() * (max_lat - min_lat) + min_lat for _ in range(k)]
+df["long"] = [random.random() * (max_lon - min_lon) + min_lat for _ in range(k)]
+df['paint_color'] = random.choices(color, k=k)
 
 # print(df["lat"].head(100))
 # draw 10000 samples from distribution with mean 25 and std dev 5

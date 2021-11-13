@@ -7,15 +7,19 @@ from shapely.geometry import Polygon
 # or county mappings with tweaking of below code
 
 url = (
-    'https://raw.githubusercontent.com/deldersveld/topojson/master/countries/us-states/IL-17-illinois-counties.json'
+    'https://raw.githubusercontent.com/deldersveld/topojson/master/countries/us-states/OR-41-oregon-counties.json'
 )
 
 topojson = json.loads(requests.get(url).text)
+refs1 = topojson['transform']['translate'][0]
+refs2 = topojson['transform']['translate'][1]
+refs = [refs1, refs2]
+
 beta = topojson['arcs']
 polys = []
 county_names = []
 
-for i, x in enumerate(topojson['objects']['cb_2015_illinois_county_20m']['geometries']):
+for i, x in enumerate(topojson['objects']['cb_2015_oregon_county_20m']['geometries']):
     poly_shape = []
     for y in x['arcs'][0]:
         if y < 0:
