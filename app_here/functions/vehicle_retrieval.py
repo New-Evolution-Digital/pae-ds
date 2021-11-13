@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
-from data.data_tools.generate_testing_dataset import df
 from shapely.geometry import Polygon, Point
-from app_here.utilities.map_info.json_map_data import polys, county_names, refs
+from app_here.utilities.map_info.json_map_data import polys, refs
 import math
 
 
