@@ -12,10 +12,8 @@ class VehicleDataRequest(BaseModel):
     params: dict = Field(..., example={
         "latitude": 44.1758,
         "longitude": -120.809,
-        "year": 2013,
-        "make": "toyota",
-        "condition": "fair",
-        "transmission": "automatic"
+        "manufacturer": "toyota",
+        "condition": "fair"
     }, description="a dicitonary with features for keys and corresponding values for values")
 
 
@@ -28,8 +26,6 @@ class VehicleSearchRequest(BaseModel):
         "longitude": -120.809,
         "radius": 30,
         "option": 1,
-        "year": 2013,
-        "make": "toyota",
-        "condition": "fair",
-        "transmission": "automatic"
+        "manufacturer": "toyota",
+        "condition": "fair"
     }, description="a dicitonary with features for keys and corresponding values for values")

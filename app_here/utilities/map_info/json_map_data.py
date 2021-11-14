@@ -14,7 +14,7 @@ topojson = json.loads(requests.get(url).text)
 refs1 = topojson['transform']['translate'][0]
 refs2 = topojson['transform']['translate'][1]
 refs = [refs1, refs2]
-
+scale = topojson['transform']['scale']
 beta = topojson['arcs']
 polys = []
 county_names = []

@@ -1,18 +1,15 @@
 from dash import dcc
 from dash import html
 import numpy as np
-import pandas as pd
-from data.data_tools.generate_testing_dataset import df
+from datah.data_tools.generate_testing_dataset import call_df
 from dash.dependencies import Input, Output, State
 from test_app.mapping_funcs_and_data.map_functions import create_map
 from app import app
 
 
-#df = pd.read_csv('modified_csv')
-center_lat = df['lat'].sum() / len(df)
-center_long = df['lon'].sum() / len(df)
-print(center_lat)
-print(center_long)
+df = call_df()
+center_lat = df['latitude'].sum() / len(df)
+center_long = df['longitude'].sum() / len(df)
 
 layout = html.Div(children=[
 
@@ -21,7 +18,7 @@ layout = html.Div(children=[
                  html.Div(
                      html.H6(children="Latitude:")
                  ),
-                 dcc.Input(id="lat_dd", placeholder='enter here', type="number", value=40.28),
+                 dcc.Input(id="lat_dd", placeholder='enter here', type="number", value=center_lat),
                  html.Br(),
                  html.P(id="output")
              ]),
@@ -30,7 +27,7 @@ layout = html.Div(children=[
                  html.Div(
                      html.H6(children="Longitude:")
                  ),
-                 dcc.Input(id="long_dd", placeholder='numer_here', type="number", value=-89.39),
+                 dcc.Input(id="long_dd", placeholder='numer_here', type="number", value=center_long),
                  html.Br(),
                  html.P(id="output")
              ]),
@@ -58,7 +55,7 @@ def find_listings(n_clicks, lat_dd, long_dd):
     max_dist = 15 * n_clicks
     for i in range(len(df)):
         alpha = np.sqrt(
-            ((df.iloc[i]['lat'] * 69) - (lat_dd * 69)) ** 2 + ((df.iloc[i]['long'] * 54.6) - (long_dd * 54.6)) ** 2)
+            ((df.iloc[i]['latitude'] * 69) - (lat_dd * 69)) ** 2 + ((df.iloc[i]['longitude'] * 54.6) - (long_dd * 54.6)) ** 2)
         if not alpha > max_dist:
             to_show.append(i)
     df_to_show = df.iloc[to_show]

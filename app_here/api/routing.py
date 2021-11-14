@@ -22,11 +22,11 @@ def get_vehicle_stats(data: VehicleDataRequest):
 
     `year` int - year of car model
 
-    `make` str - manufacturer name
+    `manufacturer` str - manufacturer name
 
     `condition` str - condition of car choices: 'fair', 'new', 'poor', 'good', 'parts'
 
-    `mileage` int - miles on odometer
+    `miles` int - miles on odometer
 
     `type` str - e.g. - sedan, coupe, SUV
 
@@ -42,6 +42,7 @@ def get_vehicle_stats(data: VehicleDataRequest):
     ---
     metrics for vehicle specified in nearby regions
     """
+    print(regional_search(data.params))
     return regional_search(data.params)
 
 @router.post("/vehicledata/listings")
@@ -66,7 +67,7 @@ def get_vehicle_listings(data: VehicleSearchRequest):
 
     `condition` str - condition of car choices: 'fair', 'new', 'poor', 'good', 'parts'
 
-    `mileage` int - miles on odometer
+    `miles` int - miles on odometer
 
     `type` str - e.g. - sedan, coupe, SUV
 

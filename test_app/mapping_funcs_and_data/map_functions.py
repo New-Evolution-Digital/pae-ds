@@ -1,4 +1,4 @@
-from test_app.mapping_funcs_and_data.json_map_data import topojson, polys, county_names
+from test_app.mapping_funcs_and_data.json_map_data import topojson, polys, county_names, refs
 import folium
 import math
 from shapely.geometry import Polygon
@@ -24,8 +24,9 @@ def get_all_circle_coords(x_center, y_center, radius, n_points):
 # enter radius in miles
 def find_intersecting_counties(lat, long, radius):
     """Function to return intersecting counties"""
-
-    refs = [36.981528, -91.511353]
+    refs1 = refs.copy()
+    print(refs1)
+    print(lat, long)
     lat_ratio = ((41.148339 - 36.981528)/3344)
     long_ratio = ((-89.638487 + 91.511353)/1061)
     radius = radius/69
@@ -62,7 +63,7 @@ def create_map(df, lat, long, circle):
                    )
     if not df is None:
         for i in range(len(df)):
-            loc = [df.iloc[i]['lat'], df.iloc[i]['long']]
+            loc = [df.iloc[i]['latitude'], df.iloc[i]['longitude']]
             folium.CircleMarker(
                 name='markers',
                 location=loc,
@@ -84,11 +85,12 @@ def create_map(df, lat, long, circle):
                 fill_color='orange'
             ).add_to(m)
         else:
+            print(circle)
             folium.Choropleth(geo_data=circle, name="radius", line_color='orange', fill_color='orange').add_to(m)
 
     folium.TopoJson(
         topojson,
-        "objects.cb_2015_illinois_county_20m",
+        "objects.cb_2015_oregon_county_20m",
         name="car prospects",
 
     ).add_to(m)

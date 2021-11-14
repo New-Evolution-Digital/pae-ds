@@ -1,16 +1,15 @@
 from dash import dcc
 from dash import html
-from data.data_tools.generate_testing_dataset import df
-import pandas as pd
+from datah.data_tools.generate_testing_dataset import call_df
 from dash.dependencies import Input, Output, State
 from test_app.mapping_funcs_and_data.map_functions import create_map, find_intersecting_counties
 from app import app
 
 
-#df = pd.read_csv('modified_csv')
+df = call_df()
 
-center_lat = df['lat'].sum() / len(df)
-center_long = df['lon'].sum() / len(df)
+center_lat = df['latitude'].sum() / len(df)
+center_long = df['longitude'].sum() / len(df)
 
 layout = html.Div(children=[
 
@@ -19,7 +18,7 @@ layout = html.Div(children=[
                  html.Div(
                      html.H6(children="Latitude:")
                  ),
-                 dcc.Input(id="lat_dd", placeholder='enter here', type="number", value=40.28),
+                 dcc.Input(id="lat_dd", placeholder='enter here', type="number", value=center_lat),
                  html.Br(),
                  html.P(id="output")
              ]),
@@ -28,7 +27,7 @@ layout = html.Div(children=[
                  html.Div(
                      html.H6(children="Longitude:")
                  ),
-                 dcc.Input(id="long_dd", placeholder='numer_here', type="number", value=-89.39),
+                 dcc.Input(id="long_dd", placeholder='numer_here', type="number", value=center_long),
                  html.Br(),
                  html.P(id="output")
              ]),

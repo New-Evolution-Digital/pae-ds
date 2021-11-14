@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from shapely.geometry import Polygon, Point
 from app_here.utilities.map_info.json_map_data import polys, refs
+# from datah.data_tools.generate_testing_dataset import call_df
 import math
 
 
@@ -22,6 +23,7 @@ def get_all_circle_coords(x_center, y_center, radius, n_points):
 
 def find_intersecting_counties(lat, long, radius):
     """Function to return intersecting counties"""
+    print(refs)
     lat_ratio = ((41.148339 - 36.981528) / 3344)
     long_ratio = ((-89.638487 + 91.511353) / 1061)
     radius = radius / 69
@@ -43,11 +45,13 @@ def find_intersecting_counties(lat, long, radius):
         x = pos[1] * lat_ratio
         coords_real.append([y + refs[1], x + refs[0]])
     circle_geo = Polygon(coords_real)
-
+    print(len(intersectors))
+    print(len(polys))
     return intersectors, circle_geo
 
 
 def regional_search(data):
+    df = call_df()
     for feature, value in data.items():
         if feature != 'longitude' and feature != 'latitude' and feature != 'odometer' and feature != 'year':
             df = df.loc[df[feature] == value]
@@ -68,8 +72,8 @@ def regional_search(data):
         intersect, circle = find_intersecting_counties(lat_dd, long_dd, max_dist)
         ind_to_show = []
         for i in range(len(df)):
-            coords = (df['latitude'], df['longitude'])
-            point = point(coords)
+            coords = (df.iloc[i]['latitude'], df.iloc[i]['longitude'])
+            point = Point(coords)
             for shape in intersect:
                 if point.within(shape):
                     ind_to_show.append(i)
@@ -135,6 +139,7 @@ def option_3(data, df):
 
 
 def listing_retrieval(data):
+    df = call_df()
     for feature, value in data.items():
         if feature != 'longitude' and feature != 'latitude' and feature != 'odometer' and feature != 'year':
             df = df.loc[df[feature] == value]
