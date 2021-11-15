@@ -1,7 +1,7 @@
 from dash import dcc
 from dash import html
 import numpy as np
-from datah.data_tools.generate_testing_dataset import call_df
+from test_app.data_tools.generate_testing_dataset import call_df
 from dash.dependencies import Input, Output, State
 from test_app.mapping_funcs_and_data.map_functions import create_map
 from app import app
