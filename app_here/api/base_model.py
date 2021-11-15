@@ -22,8 +22,8 @@ class VehicleSearchRequest(BaseModel):
     search algorithms: basic radius, regional_search, lucky_search"""
 
     params: dict = Field(..., example={
-        "latitude": 44.1758,
-        "longitude": -120.809,
+        "latitude": 43.98893819541224,
+        "longitude": -120.35412099977503,
         "radius": 30,
         "option": 1,
         "manufacturer": "toyota",

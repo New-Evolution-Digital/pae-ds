@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from shapely.geometry import Polygon, Point
-from app_here.utilities.map_info.json_map_data import polys, refs
+from app_here.utilities.map_info.json_map_data import polys, refs, county_names
 from datah.data_tools.generate_testing_dataset import call_df
 import math
 
@@ -23,30 +23,30 @@ def get_all_circle_coords(x_center, y_center, radius, n_points):
 
 def find_intersecting_counties(lat, long, radius):
     """Function to return intersecting counties"""
-    print(refs)
     lat_ratio = ((41.148339 - 36.981528) / 3344)
     long_ratio = ((-89.638487 + 91.511353) / 1061)
+    print(lat, long, 'huh?')
+    print(refs)
     radius = radius / 69
     radius = int(radius / lat_ratio)
-    lat_pre = abs(refs[0] - lat)
-    long_pre = abs(refs[1] - long)
+    lat_pre = abs(refs[1] - lat)
+    long_pre = abs(refs[0] - long)
     y_coord = int(long_pre / long_ratio)
     x_coord = int(lat_pre / lat_ratio)
     center = [y_coord, x_coord]
     coords = get_all_circle_coords(center[0], center[1], radius, 60)
     circle = Polygon(coords)
-    intersectors = []
+    intersectors = set()
     for i, shape in enumerate(polys):
         if shape.intersects(circle):
-            intersectors.append(shape)
+            intersectors.add(county_names[i])
     coords_real = []
     for pos in coords:
         y = pos[0] * long_ratio
         x = pos[1] * lat_ratio
         coords_real.append([y + refs[1], x + refs[0]])
     circle_geo = Polygon(coords_real)
-    print(len(intersectors))
-    print(len(polys))
+
     return intersectors, circle_geo
 
 
@@ -70,16 +70,10 @@ def regional_search(data):
         max_dist = 60 + (30 * factor)
         factor += 1
         intersect, circle = find_intersecting_counties(lat_dd, long_dd, max_dist)
-        ind_to_show = []
-        for i in range(len(df)):
-            coords = (df.iloc[i]['latitude'], df.iloc[i]['longitude'])
-            point = Point(coords)
-            for shape in intersect:
-                if point.within(shape):
-                    ind_to_show.append(i)
-                    break
-        length = len(ind_to_show)
-    df_to_show = df.iloc[ind_to_show]
+        for county in df['county'].value_counts():
+            if county not in intersect:
+                df_to_show = df.loc[df['county'] != county]
+        length = len(df_to_show)
     answer = {'min': df_to_show['price'].min(), 'avg': df_to_show['price'].mean(), 'max': df_to_show['price'].max()}
 
     return answer
@@ -93,13 +87,11 @@ def option_1(data, df):
     intersect, circle = find_intersecting_counties(lat, long, max_dist)
     ind_to_show = []
     for i in range(len(dfc)):
-        coords = (dfc['latitude'], dfc['longitude'])
-        point = point(coords)
-        for shape in intersect:
-            if point.within(shape):
-                ind_to_show.append(i)
-                break
+        if dfc.iloc[i]['county'] in intersect:
+            ind_to_show.append(i)
     df_to_show = dfc.iloc[ind_to_show]
+    print(len(df_to_show))
+    df_to_show.fillna('null value')
 
     return df_to_show.to_dict()
 
@@ -140,8 +132,12 @@ def option_3(data, df):
 
 def listing_retrieval(data):
     df = call_df()
+    features_to_skip = ['longitude', 'latitude', 'miles', 'year', 'radius', 'option']
+    skip_keys = set()
+    for feature in features_to_skip:
+        skip_keys.add(feature)
     for feature, value in data.items():
-        if feature != 'longitude' and feature != 'latitude' and feature != 'odometer' and feature != 'year':
+        if feature not in skip_keys:
             df = df.loc[df[feature] == value]
     try:
         data['longitude']

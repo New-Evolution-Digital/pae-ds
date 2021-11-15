@@ -60203,13 +60203,11 @@ def call_df():
         "condition",
         "cylinders",
         "fuel",
-        "odometer",
         "transmission",
         "VIN",
         "drive",
         "type",
         "paint_color",
-        "image_url",
         "title_status",
     ]
     conditions = ["new", "good", "fair", "poor", "parts"]

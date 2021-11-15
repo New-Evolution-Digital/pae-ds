@@ -24,11 +24,9 @@ def get_all_circle_coords(x_center, y_center, radius, n_points):
 # enter radius in miles
 def find_intersecting_counties(lat, long, radius):
     """Function to return intersecting counties"""
-    refs1 = refs.copy()
-    print(refs1)
-    print(lat, long)
     lat_ratio = ((41.148339 - 36.981528)/3344)
     long_ratio = ((-89.638487 + 91.511353)/1061)
+    print(lat, long)
     radius = radius/69
     radius = int(radius/lat_ratio)
     lat_pre = abs(refs[0] - lat)
