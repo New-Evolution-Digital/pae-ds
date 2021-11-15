@@ -60211,8 +60211,6 @@ def call_df():
         "paint_color",
         "image_url",
         "title_status",
-        "lat",
-        "long",
     ]
     conditions = ["new", "good", "fair", "poor", "parts"]
     drive = ['four wheel drive', 'rear wheel drive', 'front wheel drive']
