@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import string
 from shapely.geometry import Point
-from app_here.utilities.map_info.json_map_data import polys, county_names, scale, refs
+from webapp.utilities.map_info.json_map_data import polys, county_names, scale, refs
 
 VIN_Bits = list(string.ascii_lowercase) + ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 or_regions = """Agate Flat

@@ -10,7 +10,7 @@ ADD ./requirements.txt /tmp/requirements.txt
 RUN pip3 install --no-cache-dir -q -r /tmp/requirements.txt
 
 # Add our code
-ADD ./app_here /opt/webapp
+ADD ./webapp /opt/webapp
 WORKDIR ./app_here
 
 # Expose is NOT supported by Heroku
@@ -23,4 +23,4 @@ WORKDIR ./app_here
 # Run the app.  CMD is required to run on Heroku
 # $PORT is set by Heroku
 #CMD uvicorn --bind 0.0.0.0:$PORT wsgi
-CMD uvicorn --app-dir /opt webapp:app --host 0.0.0.0 --port $PORT
+CMD uvicorn --app-dir /opt webapp:app --host 0.0.0.0 --port $PATH

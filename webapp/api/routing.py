@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 import logging
 
-from app_here.functions.vehicle_retrieval import regional_search, listing_retrieval
-from app_here.api.base_model import VehicleDataRequest, VehicleSearchRequest
+from webapp.functions.vehicle_retrieval import regional_search, listing_retrieval
+from webapp.api.base_model import VehicleDataRequest, VehicleSearchRequest
 
 router = APIRouter()
 log = logging.getLogger(__name__)

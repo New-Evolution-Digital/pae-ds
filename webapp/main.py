@@ -4,8 +4,8 @@ from fastapi.responses import Response, JSONResponse
 from fastapi.requests import Request
 import uvicorn
 
-from app_here.api import routing
-from app_here.utilities.security.header_checking import get_api_key
+from webapp.api import routing
+from webapp.utilities.security.header_checking import get_api_key
 
 app = FastAPI(
     title="New Evolution Auto",
