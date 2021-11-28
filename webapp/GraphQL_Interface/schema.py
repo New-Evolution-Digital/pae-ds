@@ -9,10 +9,10 @@ SECRET = os.getenv('SECRET_TOKEN')
 class vehicleData(graphene.InputObjectType):
     longitude = graphene.Float()
     latitude = graphene.Float()
-    year = graphene.Integer()
+    year = graphene.Int()
     manufacturer = graphene.String()
     condition = graphene.String()
-    miles = graphene.Integer()
+    miles = graphene.Int()
     type = graphene.String()
     transmission = graphene.String()
     drive = graphene.String()
@@ -21,10 +21,10 @@ class vehicleData(graphene.InputObjectType):
 
 
 class Radius(graphene.ObjectType):
-    radius = graphene.Integer(required=True)
+    radius = graphene.Int(required=True)
 
-class Option(graphene.ObjectType):
-    option = String()
+class Option(graphene.Enum):
+    option = graphene.String()
 
 
 class Query(graphene.ObjectType):
@@ -43,7 +43,7 @@ class Query(graphene.ObjectType):
         return resp
 
 
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query, types=[vehicleData, Radius, Option])
 
 # we can query for our field (with the default argument)
 query_string = '{ goodbye }'

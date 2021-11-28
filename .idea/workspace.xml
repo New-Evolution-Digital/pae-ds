@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4880af37-d7f4-4288-a6a2-b6fd318b80c2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/webapp/GraphQL_Interface/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/GraphQL_Interface/schema.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/GraphQL_Interface/schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/GraphQL_Interface/schema.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,7 +150,7 @@
       <updated>1636503015526</updated>
       <workItem from="1636503016940" duration="2716000" />
       <workItem from="1636771059398" duration="38664000" />
-      <workItem from="1637978330709" duration="12971000" />
+      <workItem from="1637978330709" duration="13568000" />
     </task>
     <servers />
   </component>
