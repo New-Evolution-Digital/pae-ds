@@ -1,4 +1,5 @@
 import graphene
+from GraphQL_Interface.functions.vehicle_retrieval import regional_search
 
 
 class SearchType(graphene.Enum):
@@ -20,18 +21,48 @@ class GeoInput(graphene.InputObjectType):
     search_cat = SearchType(default_value=1)
     lat = graphene.Float(required=True)
     lng = graphene.Float(required=True)
+    year = graphene.Int(default_value=None)
+    manufacturer = graphene.String(default_value=None)
+    model = graphene.String(default_value=None)
+    condition = graphene.String(default_value=None)
+    miles = graphene.Int(default_value=None)
+    type = graphene.String(default_value=None)
+    transmission = graphene.String(default_value=None)
+    drive = graphene.String(default_value=None)
+    color = graphene.String(default_value=None)
+
+    @property
+    def ltlng(self):
+        print('latlng called properly from geo input class')
+        data = {'lat': self.lat,
+                'long': self.lng, 'year': self.year, 'manufacturer': self.manufacturer,
+                'model': self.model, 'condition': self.condition, 'odometer': self.miles,
+                'type': self.type, 'transmission': self.transmission, 'drive': self.drive,
+                'color': self.color}
+        print(data, '\nabove data in place')
+        to_del = []
+        for key, value in data.items():
+            if value is None:
+                to_del.append(key)
+        print(to_del, '\n above array to be deleted from data input')
+        for key in to_del:
+            del data[key]
+        print(data, 'resulting data set')
+        final_return = regional_search(data)
+        print(final_return, 'return from function')
+        return str(final_return)
+
+
+class VehicleId(graphene.ObjectType):
     year = graphene.Int()
     manufacturer = graphene.String()
+    model = graphene.String()
     condition = graphene.String()
     miles = graphene.Int()
     type = graphene.String()
     transmission = graphene.String()
     drive = graphene.String()
     color = graphene.String()
-
-    @property
-    def ltlng(self):
-        return f"({self.lat},{self.lng})"
 
 
 class VehicleCompare(graphene.ObjectType):
@@ -43,8 +74,10 @@ class VehicleSearch(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
+    print('made it through to the correct query')
     vehicle_compare = graphene.Field(VehicleCompare, geo=GeoInput(required=True))
     vehicle_search = graphene.Field(VehicleSearch, geo=GeoInput(required=True))
+    vehicle_id = graphene.Field(VehicleId)
 
     def resolve_vehicle_compare(root, info, geo):
         return VehicleCompare(ltlng=geo.ltlng)
@@ -57,25 +90,16 @@ class Query(graphene.ObjectType):
         # prompted by another resolve function for specific
         # demanded details on each vehicle
 
-# class CreateAddress(graphene.Mutation):
-#     class Arguments:
-#         geo = GeoInput(required=True)
-#
-#     Output = Address
-#
-#     def mutate(root, info, geo):
-#         return Address(ltlng=geo.ltlng)
+    def resolve_vehicle_id(root, info, data):
+        return VehicleId(year=1)
 
-
-# class Mutation(graphene.ObjectType):
-#     create_address = CreateAddress.Field()
 
 
 schema = graphene.Schema(query=Query)
 query = """
     query something{
-      vehicleCompare(geo: {lat:32.2, lng:12}) {
-        ltlng
+      vehicleCompare(geo: {lat:43.95, lng:-120.54, manufacturer: "toyota"}) {
+        minMax
       }
     }
 """

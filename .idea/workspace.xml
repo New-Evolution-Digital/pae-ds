@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4880af37-d7f4-4288-a6a2-b6fd318b80c2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/GraphQL_Interface/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GraphQL_Interface/schema.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/pae-ds.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pae-ds.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/GraphQL_Interface/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/GraphQL_Interface/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/GraphQL_Interface/schema.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphQL_Interface/schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/GraphQL_Interface/schema.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,29 +55,7 @@
       <recent name="$PROJECT_DIR$/webapp" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.schema">
-    <configuration name="generate_testing_dataset" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="pae-ds" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data/data_tools" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data/data_tools/generate_testing_dataset.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.test">
     <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="pae-ds" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -170,20 +144,42 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pae-ds" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/GraphQL_Interface" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/GraphQL_Interface/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
-      <item itemvalue="Python.generate_testing_dataset" />
       <item itemvalue="Python.main" />
       <item itemvalue="Python.run" />
       <item itemvalue="Python.main (1)" />
       <item itemvalue="Python.schema" />
+      <item itemvalue="Python.test" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.test" />
         <item itemvalue="Python.schema" />
         <item itemvalue="Python.main (1)" />
         <item itemvalue="Python.main" />
         <item itemvalue="Python.run" />
-        <item itemvalue="Python.generate_testing_dataset" />
       </list>
     </recent_temporary>
   </component>
@@ -197,7 +193,8 @@
       <updated>1636503015526</updated>
       <workItem from="1636503016940" duration="2716000" />
       <workItem from="1636771059398" duration="38664000" />
-      <workItem from="1637978330709" duration="31233000" />
+      <workItem from="1637978330709" duration="34302000" />
+      <workItem from="1638501888502" duration="2428000" />
     </task>
     <servers />
   </component>
@@ -216,11 +213,23 @@
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/pae_ds$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1638125500251" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webapp" />
     <SUITE FILE_PATH="coverage/pae_ds$main.coverage" NAME="main Coverage Results" MODIFIED="1638122968953" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webapp" />
     <SUITE FILE_PATH="coverage/pae_ds$generate_testing_dataset.coverage" NAME="generate_testing_dataset Coverage Results" MODIFIED="1636774400491" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data/data_tools" />
+    <SUITE FILE_PATH="coverage/pae_ds$test.coverage" NAME="test Coverage Results" MODIFIED="1638500126040" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GraphQL_Interface" />
     <SUITE FILE_PATH="coverage/pae_ds$run.coverage" NAME="run Coverage Results" MODIFIED="1636951216489" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test_app" />
-    <SUITE FILE_PATH="coverage/pae_ds$schema.coverage" NAME="schema Coverage Results" MODIFIED="1638435186137" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GraphQL_Interface" />
+    <SUITE FILE_PATH="coverage/pae_ds$schema.coverage" NAME="schema Coverage Results" MODIFIED="1638500011541" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GraphQL_Interface" />
   </component>
 </project>
