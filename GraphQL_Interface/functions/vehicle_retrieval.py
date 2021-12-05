@@ -13,24 +13,15 @@ import os
 
 def dealer_retrieval(counties):
     """function for formatting query"""
-    print('\n\n\ncommence dealer_retrieval stage')
     try:
         cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'), port=os.getenv('PORT'),
                                       host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
-        print('checking connection..... \n\n',
-              'mustve worked I guess.. \n\n\n')
         query_p1 = """SELECT id FROM dealers WHERE"""
         query_p2 = """ county ="""
-        print('check status of counties: \n',
-              counties)
         for count in counties:
             query_p1 += query_p2 + f""" '{count}' OR"""
         query = query_p1[:-3]
-        print('check for errors in query: \n',
-              query)
         dealers = pd.read_sql(query, cnx)
-        print('checking dealers: \n',
-              len(dealers))
     finally:
         cnx.close()
     return dealers
@@ -100,8 +91,6 @@ def regional_search(data):
 
     lat_dd = data['lat']
     long_dd = data['long']
-    print('just inside the call block, heres lat and long: \n',
-          str(lat_dd) + ' ' + str(long_dd))
     # only for now.... removing year and odometer from selection criteria
     del data['long']
     del data['lat']
@@ -109,8 +98,6 @@ def regional_search(data):
         del data['year']
     if 'odometer' in data:
         del data['odometer']
-    print('deletion successful: \n',
-          data)
     ###################### for now ###################################
     length = 0
     factor = 1
@@ -118,13 +105,9 @@ def regional_search(data):
         max_dist = 60 + (30 * factor)
         factor += 1
         intersect, circle = find_intersecting_counties(lat_dd, long_dd, max_dist)
-        print('interesection check: \n',
-              len(intersect))
         ids = dealer_retrieval(intersect)
         sql_return = vehicle_query(ids, [x for x in data.keys()], [val for val in data.values()])
         length = len(sql_return)
-    print('verifying sql_return dataframe: \n',
-          len(sql_return))
     answer = {'min': sql_return['price'].min(), 'avg': sql_return['price'].mean(), 'max': sql_return['price'].max()}
 
     return answer
@@ -141,7 +124,6 @@ def option_1(data, df):
         if dfc.iloc[i]['county'] in intersect:
             ind_to_show.append(i)
     df_to_show = dfc.iloc[ind_to_show]
-    print(len(df_to_show))
     df_to_show.fillna('null value')
 
     return df_to_show.to_dict()

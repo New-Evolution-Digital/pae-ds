@@ -6,8 +6,8 @@ from pydantic import BaseModel, Field, validator
 
 class VehicleDataRequest(BaseModel):
     """Model that handles vehicle data request to the API:
-    Returns min, max and median values for described vehicle.
-    also, can return histogram for said car"""
+    Returns min, max and median values for described vehicle
+    using the regional search method."""
 
     params: dict = Field(..., example={
         "latitude": 44.1758,

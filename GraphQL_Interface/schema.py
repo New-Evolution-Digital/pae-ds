@@ -2,21 +2,6 @@ import graphene
 from GraphQL_Interface.functions.vehicle_retrieval import regional_search
 
 
-class SearchType(graphene.Enum):
-    REGION_SEARCH = 1
-    BASIC_SEARCH = 2
-    FLEX_SEARCH = 3
-
-    @property
-    def description(self):
-        if self == SearchType.REGION_SEARCH:
-            return 'regional Search'
-        elif self == SearchType.BASIC_SEARCH:
-            return 'basic, radius search'
-        else:
-            return 'flex search'
-
-
 class GeoInput(graphene.InputObjectType):
     search_cat = SearchType(default_value=1)
     lat = graphene.Float(required=True)
@@ -32,25 +17,30 @@ class GeoInput(graphene.InputObjectType):
     color = graphene.String(default_value=None)
 
     @property
-    def ltlng(self):
-        print('latlng called properly from geo input class')
+    def minmax(self):
         data = {'lat': self.lat,
                 'long': self.lng, 'year': self.year, 'manufacturer': self.manufacturer,
                 'model': self.model, 'condition': self.condition, 'odometer': self.miles,
                 'type': self.type, 'transmission': self.transmission, 'drive': self.drive,
                 'color': self.color}
-        print(data, '\nabove data in place')
         to_del = []
         for key, value in data.items():
             if value is None:
                 to_del.append(key)
-        print(to_del, '\n above array to be deleted from data input')
         for key in to_del:
             del data[key]
-        print(data, 'resulting data set')
         final_return = regional_search(data)
-        print(final_return, 'return from function')
         return str(final_return)
+
+    @property
+    def search(self):
+        data = {'lat': self.lat,
+                'long': self.lng, 'year': self.year, 'manufacturer': self.manufacturer,
+                'model': self.model, 'condition': self.condition, 'odometer': self.miles,
+                'type': self.type, 'transmission': self.transmission, 'drive': self.drive,
+                'color': self.color}
+        pass
+        return
 
 
 class VehicleId(graphene.ObjectType):
@@ -65,22 +55,22 @@ class VehicleId(graphene.ObjectType):
     color = graphene.String()
 
 
-class VehicleCompare(graphene.ObjectType):
-    ltlng = graphene.String()
+class VehicleStats(graphene.ObjectType):
+    minMax = graphene.String()
 
 
 class VehicleSearch(graphene.ObjectType):
-    ltlng = graphene.String()
+    minMax = graphene.String()
 
 
 class Query(graphene.ObjectType):
     print('made it through to the correct query')
-    vehicle_compare = graphene.Field(VehicleCompare, geo=GeoInput(required=True))
+    vehicle_stats = graphene.Field(VehicleStats, geo=GeoInput(required=True))
     vehicle_search = graphene.Field(VehicleSearch, geo=GeoInput(required=True))
     vehicle_id = graphene.Field(VehicleId)
 
-    def resolve_vehicle_compare(root, info, geo):
-        return VehicleCompare(ltlng=geo.ltlng)
+    def resolve_vehicle_stats(root, info, geo):
+        return VehicleStats(ltlng=geo.minmax)
         # to be returned: a min, mean, and max value
         # given by supplied search_cat value
 
@@ -98,30 +88,18 @@ class Query(graphene.ObjectType):
 schema = graphene.Schema(query=Query)
 query = """
     query something{
-      vehicleCompare(geo: {lat:43.95, lng:-120.54, manufacturer: "toyota"}) {
+      VehicleStats(geo: {lat:43.95, lng:-120.54, manufacturer: "toyota"}) {
         minMax
       }
     }
 """
-mutation = """
-    mutation addAddress{
-      createAddress(geo: {lat:32.2, lng:12}) {
-        ltlng
-      }
-    }
-"""
+
 
 
 def test_query():
     result = schema.execute(query)
     assert not result.errors
-    assert result.data == {"vehicleCompare": {"latlng": "(32.2,12.0)"}}
-
-
-def test_mutation():
-    result = schema.execute(mutation)
-    assert not result.errors
-    assert result.data == {"createAddress": {"latlng": "(32.2,12.0)"}}
+    assert result.data == {"vehicleCompare": {'min': 100, 'avg': 21601.936941493845, 'max': 299991}}
 
 
 if __name__ == "__main__":
