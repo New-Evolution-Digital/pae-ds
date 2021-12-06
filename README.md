@@ -1,5 +1,7 @@
 # DS repository
 
+https://devcenter.heroku.com/articles/container-registry-and-runtime
+
 Wanted to jot down a quick description of the test app and the api endpoint recently pushed and merged in:
 
 The test app is for algorithmic demonstrative purposes and to check that the algorithms written are working according to expectation;

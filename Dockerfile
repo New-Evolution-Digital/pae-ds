@@ -23,4 +23,4 @@ WORKDIR ./app_here
 # Run the app.  CMD is required to run on Heroku
 # $PORT is set by Heroku
 #CMD uvicorn --bind 0.0.0.0:$PORT wsgi
-CMD uvicorn --app-dir /opt webapp:app --host 0.0.0.0 --port $PATH
+CMD uvicorn --app-dir /opt webapp:app --host 0.0.0.0 --port $PORT
