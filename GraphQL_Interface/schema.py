@@ -82,9 +82,14 @@ class BasicRadiusSearch(graphene.ObjectType):
     search = graphene.List(graphene.String)
 
 
+class RegionalSearch(graphene.ObjectType):
+    search = graphene.List(graphene.String)
+
+
 class Query(graphene.ObjectType):
     vehicle_stats = graphene.Field(VehicleStats, geo=GeoInput(required=True))
     basic_radius_search = graphene.Field(BasicRadiusSearch, geo=GeoInput(required=True))
+    regional_search = graphene.Field(RegionalSearch, geo=GeoInput(required=True))
 
     vehicle_id = graphene.Field(VehicleId)
 
@@ -99,6 +104,10 @@ class Query(graphene.ObjectType):
         # to be returned: a list of car ids, to then be
         # prompted by another resolve function for specific
         # demanded details on each vehicle
+
+    def resolve_regional_search(root, info, geo):
+        pass
+        return
 
     def resolve_vehicle_id(root, info, data):
         return VehicleId(year=1)

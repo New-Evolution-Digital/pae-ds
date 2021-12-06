@@ -116,11 +116,21 @@ def search_function(long_dd, lat_dd, data, search):
         finally:
             cnx.close()
         return [item for item in sql_return['id']]
+    def option_2(long_dd, lat_dd, data):
+        """for regional search"""
+        radius = data['radius']
+        del data['radius']
+        intersect, circle = find_intersecting_counties(lat_dd, long_dd, radius)
+        ids = dealer_retrieval(intersect)
+        sql_return = vehicle_query(ids, [x for x in data.keys()],
+                                   [val for val in data.values()],
+                                   table_columns=['id'])
+        return [item for item in sql_return['id']]
 
     if search == 1:
         return option_1(long_dd, lat_dd, data)
     elif search == 2:
-        return 'not yet implemented'
+        return option_2(long_dd, lat_dd, data)
     else:
         return 'not yet implemented'
 
