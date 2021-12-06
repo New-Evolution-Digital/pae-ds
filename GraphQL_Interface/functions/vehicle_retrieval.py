@@ -14,7 +14,8 @@ import os
 def dealer_retrieval(counties):
     """function for formatting query"""
     try:
-        cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'), port=os.getenv('PORT'),
+        cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
+                                      port=os.getenv('PORT'),
                                       host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
         query_p1 = """SELECT id FROM dealers WHERE"""
         query_p2 = """ county ="""
@@ -27,17 +28,25 @@ def dealer_retrieval(counties):
     return dealers
 
 
-def vehicle_query(ids, fields, values):
+def vehicle_query(ids, fields, values, table_columns=None):
     """function for formatting query and return data from database"""
-
     try:
-        cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'), port=os.getenv('PORT'),
+        cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
+                                      port=os.getenv('PORT'),
                                       host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
-        query_p1 = """SELECT * FROM vehicles WHERE """
+        if table_columns is None:
+            query_p1 = """SELECT * FROM vehicles WHERE """
+        else:
+            query_p1 = """SELECT"""
+            cap = """ FROM vehicles WHERE"""
+            for col in table_columns:
+                query_p1 += ' ' + col + ','
+            query_p1 = query_p1[:-1]
+            query_p1 += cap
         query_p2 = """ dealer_ID ="""
         for count in ids['id'][:-1]:
             query_p1 += query_p2 + f""" '{count}' OR"""
-        query = query_p1 + query_p2 + ' ' + "'" + str(ids['id'][len(ids)-1]) + "'"
+        query = query_p1 + query_p2 + ' ' + "'" + str(ids['id'][len(ids) - 1]) + "'"
         for i in range(len(fields)):
             query += f""" AND {fields[i]} = '{values[i]}'"""
         data = pd.read_sql(query, cnx)
@@ -61,6 +70,7 @@ def get_all_circle_coords(x_center, y_center, radius, n_points):
 
 def find_intersecting_counties(lat, long, radius):
     """Function to return intersecting counties"""
+
     lat_ratio = ((41.148339 - 36.981528) / 3344)
     long_ratio = ((-89.638487 + 91.511353) / 1061)
     radius = radius / 69
@@ -86,7 +96,36 @@ def find_intersecting_counties(lat, long, radius):
     return intersectors, circle_geo
 
 
-def regional_search(data):
+def search_function(long_dd, lat_dd, data, search):
+    def option_1(long_dd, lat_dd, data):
+        """for basic radius search"""
+        lat_adj = (lat_dd * 69)
+        long_adj = (long_dd * 54.6)
+        final_distance = data['radius']
+        del data['radius']
+        try:
+            cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
+                                          port=os.getenv('PORT'),
+                                          host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
+            query = f"""SELECT id FROM dealers WHERE """ \
+                    f"""(SQRT((((c1*69) - {lat_adj}) * ((c1*69) - {lat_adj}))""" \
+                    f"""+ (((c2*54.6) - {long_adj})*((c2*54.6) - {long_adj}))) < {final_distance}); """
+            ids = pd.read_sql(query, cnx)
+            sql_return = vehicle_query(ids, [x for x in data.keys()],
+                                       [x for x in data.values()], table_columns=['id'])
+        finally:
+            cnx.close()
+        return [item for item in sql_return['id']]
+
+    if search == 1:
+        return option_1(long_dd, lat_dd, data)
+    elif search == 2:
+        return 'not yet implemented'
+    else:
+        return 'not yet implemented'
+
+
+def regional_search(data, search=None):
     """begininning of regional search"""
 
     lat_dd = data['lat']
@@ -98,95 +137,22 @@ def regional_search(data):
         del data['year']
     if 'odometer' in data:
         del data['odometer']
-    ###################### for now ###################################
+
     length = 0
     factor = 1
-    while length < 10 and factor < 3:
-        max_dist = 60 + (30 * factor)
-        factor += 1
-        intersect, circle = find_intersecting_counties(lat_dd, long_dd, max_dist)
-        ids = dealer_retrieval(intersect)
-        sql_return = vehicle_query(ids, [x for x in data.keys()], [val for val in data.values()])
-        length = len(sql_return)
-    answer = {'min': sql_return['price'].min(), 'avg': sql_return['price'].mean(), 'max': sql_return['price'].max()}
+    if search is None:
+        while length < 25 and factor < 3:
+            max_dist = 60 + (30 * factor)
+            factor += 1
+            intersect, circle = find_intersecting_counties(lat_dd, long_dd, max_dist)
+            ids = dealer_retrieval(intersect)
+            sql_return = vehicle_query(ids, [x for x in data.keys()],
+                                       [val for val in data.values()])
+            length = len(sql_return)
 
-    return answer
+        answer = {'min': sql_return['price'].min(), 'avg': sql_return['price'].mean(), 'max': sql_return['price'].max()}
 
-
-def option_1(data, df):
-    dfc = df.copy()
-    lat = data['latitude']
-    long = data['longitude']
-    max_dist = data['radius']
-    intersect, circle = find_intersecting_counties(lat, long, max_dist)
-    ind_to_show = []
-    for i in range(len(dfc)):
-        if dfc.iloc[i]['county'] in intersect:
-            ind_to_show.append(i)
-    df_to_show = dfc.iloc[ind_to_show]
-    df_to_show.fillna('null value')
-
-    return df_to_show.to_dict()
-
-
-def option_2(data, df):
-    to_show = []
-    dfc = df.copy()
-    max_dist = data['radius']
-    lat = data['latitude']
-    long = data['longitude']
-    for i in range(len(df)):
-        alpha = np.sqrt(
-            ((df.iloc[i]['lat'] * 69) - (lat * 69)) ** 2 + ((df.iloc[i]['long'] * 54.6) - (long * 54.6)) ** 2)
-        if not alpha > max_dist:
-            to_show.append(i)
-    df_to_show = dfc.iloc[to_show]
-    return df_to_show.to_dict()
-
-
-def option_3(data, df):
-    to_show = []
-    dfc = df.copy()
-    max_dist = data['radius']
-    lat = data['latitude']
-    long = data['longitude']
-    # homework for tomorrow:
-    # need to add in formula to determine cheaper cars based on standard deviation threshold, then
-    # add cheaper cars into the listing return for the customer
-    for i in range(len(df)):
-        alpha = np.sqrt(
-            ((df.iloc[i]['lat'] * 69) - (lat * 69)) ** 2 + ((df.iloc[i]['long'] * 54.6) - (long * 54.6)) ** 2)
-        if not alpha > max_dist:
-            to_show.append(i)
-    df_to_show = dfc.iloc[to_show]
-
-    return df_to_show.to_dict()
-
-
-def listing_retrieval(data):
-    df = call_df()
-    features_to_skip = ['longitude', 'latitude', 'miles', 'year', 'radius', 'option']
-    skip_keys = set()
-    for feature in features_to_skip:
-        skip_keys.add(feature)
-    for feature, value in data.items():
-        if feature not in skip_keys:
-            df = df.loc[df[feature] == value]
-    try:
-        data['longitude']
-    except:
-        return 'error, no longitudinal coordinate!!!!'
-    try:
-        data['latitude']
-    except:
-        return 'error, no latitudinal coordinate!!!!'
-
-    try:
-        if data['option'] == 1:
-            return option_1(data, df)
-        elif data['option'] == 2:
-            return option_2(data, df)
-        else:
-            return option_3(data, df)
-    except:
-        return option_1(data, df)
+        return answer
+    else:
+        final_return = search_function(long_dd, lat_dd, data, search)
+        return final_return
