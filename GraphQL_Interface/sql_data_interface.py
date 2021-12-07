@@ -9,40 +9,46 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+dealers_cache = {}
 
-def get_vehicle(id):
+def get_vehicle(id, data=None):
     """Simple function to return Vehicle from Database. Input vehicle id."""
+    if data is not None:
+        resp = data.to_dict()
+    else:
+        try:
+            cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
+                                          port=os.getenv('PORT'),
+                                          host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
+            query = f"""SELECT * FROM vehicles WHERE id = {id}"""
+            resp = pd.read_sql(query, cnx).iloc[0].to_dict()
+        finally:
+            cnx.close()
+    vehicle_object = Vehicle(
+        id=resp['id'],
+        year=resp['year'],
+        manufacturer=resp['manufacturer'],
+        model=resp['model'],
+        condition=resp['cond'],
+        odometer=resp['odometer'],
+        type=resp['type'],
+        transmission=resp['transmission'],
+        drive=resp['drive'],
+        color=resp['paint_color'],
+        price=resp['price'],
+        cylinders=resp['cylinders'],
+        VIN=resp['VIN'],
+        dealer_id=resp['dealer_ID']
+    )
 
-    try:
-        cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
-                                      port=os.getenv('PORT'),
-                                      host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
-        query = f"""SELECT * FROM vehicles WHERE id = {id}"""
-        resp = pd.read_sql(query, cnx).to_dict()
-        vehicle_object = Vehicle(
-            id=resp['id'][0],
-            year=resp['year'][0],
-            manufacturer=resp['manufacturer'][0],
-            model=resp['model'][0],
-            condition=resp['cond'][0],
-            odometer=resp['odometer'][0],
-            type=resp['type'][0],
-            transmission=resp['transmission'][0],
-            drive=resp['drive'][0],
-            color=resp['paint_color'][0],
-            price=resp['price'][0],
-            cylinders=resp['cylinders'][0],
-            VIN=resp['VIN'][0],
-            dealer_id=resp['dealer_ID'][0]
-        )
-    finally:
-        cnx.close()
     return vehicle_object
 
 
-def get_dealer(id):
+def get_dealer(id, data=None):
     """simple function to return dealer. Input dealer ID."""
-
+    if data is not None:
+        pass
+        return
     try:
         cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
                                       port=os.getenv('PORT'),
@@ -59,7 +65,7 @@ def get_dealer(id):
     return dealer_object
 
 
-def dealer_retrieval(counties):
+def dealer_query(counties):
     """function for formatting query"""
     try:
         cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
@@ -71,32 +77,24 @@ def dealer_retrieval(counties):
             query_p1 += query_p2 + f""" '{count}' OR"""
         query = query_p1[:-3]
         dealers = pd.read_sql(query, cnx)
+
     finally:
         cnx.close()
     return dealers
 
 
-def vehicle_query(ids, fields, values, table_columns=None):
+def vehicle_query(ids):
     """function for formatting query and return data from database"""
     try:
         cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
                                       port=os.getenv('PORT'),
                                       host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
-        if table_columns is None:
-            query_p1 = """SELECT * FROM vehicles WHERE """
-        else:
-            query_p1 = """SELECT"""
-            cap = """ FROM vehicles WHERE"""
-            for col in table_columns:
-                query_p1 += ' ' + col + ','
-            query_p1 = query_p1[:-1]
-            query_p1 += cap
+
+        query_p1 = """SELECT * FROM vehicles WHERE """
         query_p2 = """ dealer_ID ="""
         for count in ids['id'][:-1]:
             query_p1 += query_p2 + f""" '{count}' OR"""
         query = query_p1 + query_p2 + ' ' + "'" + str(ids['id'][len(ids) - 1]) + "'"
-        for i in range(len(fields)):
-            query += f""" AND {fields[i]} = '{values[i]}'"""
         data = pd.read_sql(query, cnx)
     finally:
         cnx.close()
@@ -144,8 +142,10 @@ def find_intersecting_counties(lat, long, radius):
     return intersectors, circle_geo
 
 
-def search_function(long_dd, lat_dd, data, search):
+def search_function(data):
+    print('found search function')
     def option_1(long_dd, lat_dd, data):
+        print('made it to the correct function block', data)
         """for basic radius search"""
         lat_adj = (lat_dd * 69)
         long_adj = (long_dd * 54.6)
@@ -155,12 +155,11 @@ def search_function(long_dd, lat_dd, data, search):
             cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
                                           port=os.getenv('PORT'),
                                           host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
-            query = f"""SELECT id FROM dealers WHERE """ \
+            query = f"""SELECT * FROM dealers WHERE """ \
                     f"""(SQRT((((c1*69) - {lat_adj}) * ((c1*69) - {lat_adj}))""" \
                     f"""+ (((c2*54.6) - {long_adj})*((c2*54.6) - {long_adj}))) < {final_distance}); """
             ids = pd.read_sql(query, cnx)
-            sql_return = vehicle_query(ids, [x for x in data.keys()],
-                                       [x for x in data.values()], table_columns=['id'])
+            sql_return = vehicle_query(ids)
         finally:
             cnx.close()
         return [item for item in sql_return['id']]
@@ -168,50 +167,28 @@ def search_function(long_dd, lat_dd, data, search):
     def option_2(long_dd, lat_dd, data):
         """for regional search"""
         radius = data['radius']
+        print('found option 2, :\n', data)
         del data['radius']
         intersect, circle = find_intersecting_counties(lat_dd, long_dd, radius)
-        ids = dealer_retrieval(intersect)
-        sql_return = vehicle_query(ids, [x for x in data.keys()],
-                                   [val for val in data.values()],
-                                   table_columns=['id'])
-        return [item for item in sql_return['id']]
+        ids = dealer_query(intersect)
+        sql_return = vehicle_query(ids)
+        vehicle_lists = []
+        for i in range(len(sql_return)):
+            row = sql_return.iloc[i]
+            vehicle_lists.append(get_vehicle(row['id'], row))
+        return vehicle_lists
 
+
+
+    long_dd = data['long']
+    lat_dd = data['lat']
+    search = data['search_cat']
+    del data['long']
+    del data['lat']
+    del data['search_cat']
     if search == 'RADIUS':
         return option_1(long_dd, lat_dd, data)
-    elif search == 'REGIONAL':
+    elif search == 'REGION':
         return option_2(long_dd, lat_dd, data)
     else:
         return 'not yet implemented'
-
-
-def regional_search(data, search=None):
-    """begininning of regional search"""
-
-    lat_dd = data['lat']
-    long_dd = data['long']
-    # only for now.... removing year and odometer from selection criteria
-    del data['long']
-    del data['lat']
-    if 'year' in data:
-        del data['year']
-    if 'odometer' in data:
-        del data['odometer']
-
-    length = 0
-    factor = 1
-    if search is None:
-        while length < 25 and factor < 3:
-            max_dist = 60 + (30 * factor)
-            factor += 1
-            intersect, circle = find_intersecting_counties(lat_dd, long_dd, max_dist)
-            ids = dealer_retrieval(intersect)
-            sql_return = vehicle_query(ids, [x for x in data.keys()],
-                                       [val for val in data.values()])
-            length = len(sql_return)
-
-        answer = {'min': sql_return['price'].min(), 'avg': sql_return['price'].mean(), 'max': sql_return['price'].max()}
-
-        return answer
-    else:
-        final_return = search_function(long_dd, lat_dd, data, search)
-        return final_return

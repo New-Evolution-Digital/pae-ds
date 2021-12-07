@@ -24,8 +24,5 @@ class Dealer(graphene.ObjectType):
     city = graphene.String()
 
 
-class SearchCategory(graphene.Enum):
-    RADIUS = 1
-    REGIONAL = 2
-    FLEX = 3
-    STATS = 4
+class VehicleSearch(graphene.ObjectType):
+    searchResult = graphene.List(lambda: Vehicle)
