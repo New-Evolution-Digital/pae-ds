@@ -1,15 +1,63 @@
 import pandas as pd
-import numpy as np
 from shapely.geometry import Polygon, Point
-from webapp.utilities.map_info.json_map_data import polys, refs, county_names
-from webapp.datah.data_tools.generate_testing_dataset import call_df
+from GraphQL_Interface.map_data.json_map_data import polys, refs, county_names
 import math
 import mysql.connector
 import os
+from .schema_components import Vehicle, Dealer
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
-# functions to determine points of circle
-# This function gets just one pair of coordinates based on the angle theta
+def get_vehicle(id):
+    """Simple function to return Vehicle from Database. Input vehicle id."""
+
+    try:
+        cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
+                                      port=os.getenv('PORT'),
+                                      host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
+        query = f"""SELECT * FROM vehicles WHERE id = {id}"""
+        resp = pd.read_sql(query, cnx).to_dict()
+        vehicle_object = Vehicle(
+            id=resp['id'][0],
+            year=resp['year'][0],
+            manufacturer=resp['manufacturer'][0],
+            model=resp['model'][0],
+            condition=resp['cond'][0],
+            odometer=resp['odometer'][0],
+            type=resp['type'][0],
+            transmission=resp['transmission'][0],
+            drive=resp['drive'][0],
+            color=resp['paint_color'][0],
+            price=resp['price'][0],
+            cylinders=resp['cylinders'][0],
+            VIN=resp['VIN'][0],
+            dealer_id=resp['dealer_ID'][0]
+        )
+    finally:
+        cnx.close()
+    return vehicle_object
+
+
+def get_dealer(id):
+    """simple function to return dealer. Input dealer ID."""
+
+    try:
+        cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
+                                      port=os.getenv('PORT'),
+                                      host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
+        query = f"""SELECT * FROM dealers WHERE id = '{id}'"""
+        resp = pd.read_sql(query, cnx).to_dict()
+        dealer_object = Dealer(
+            id=resp['id'][0],
+            city=resp['city'][0],
+            name=resp['name'][0]
+        )
+    finally:
+        cnx.close()
+    return dealer_object
+
 
 def dealer_retrieval(counties):
     """function for formatting query"""
@@ -17,7 +65,7 @@ def dealer_retrieval(counties):
         cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
                                       port=os.getenv('PORT'),
                                       host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
-        query_p1 = """SELECT id FROM dealers WHERE"""
+        query_p1 = """SELECT * FROM dealers WHERE"""
         query_p2 = """ county ="""
         for count in counties:
             query_p1 += query_p2 + f""" '{count}' OR"""
@@ -116,6 +164,7 @@ def search_function(long_dd, lat_dd, data, search):
         finally:
             cnx.close()
         return [item for item in sql_return['id']]
+
     def option_2(long_dd, lat_dd, data):
         """for regional search"""
         radius = data['radius']
@@ -127,9 +176,9 @@ def search_function(long_dd, lat_dd, data, search):
                                    table_columns=['id'])
         return [item for item in sql_return['id']]
 
-    if search == 1:
+    if search == 'RADIUS':
         return option_1(long_dd, lat_dd, data)
-    elif search == 2:
+    elif search == 'REGIONAL':
         return option_2(long_dd, lat_dd, data)
     else:
         return 'not yet implemented'
