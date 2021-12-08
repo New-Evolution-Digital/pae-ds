@@ -2,7 +2,6 @@
 from flask import Flask
 from flask_graphql import GraphQLView
 from .schema import schema
-from .sql_data_interface import get_vehicle
 
 app = Flask(__name__)
 app.debug = True

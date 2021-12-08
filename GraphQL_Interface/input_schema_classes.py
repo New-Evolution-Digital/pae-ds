@@ -1,12 +1,5 @@
 import graphene
-from GraphQL_Interface.sql_data_interface import search_function
-
-
-class SearchCategory(graphene.Enum):
-    RADIUS = 1
-    REGIONAL = 2
-    FLEX = 3
-    STATS = 4
+from GraphQL_Interface.sql_interface.sql_data_interface import search_function
 
 
 class SearchInput(graphene.InputObjectType):
@@ -23,6 +16,7 @@ class SearchInput(graphene.InputObjectType):
     transmission = graphene.String(default_value=None)
     drive = graphene.String(default_value=None)
     color = graphene.String(default_value=None)
+    limit = graphene.Int(default_value=None)
 
     def clean_data(self):
         """cleans data before sending it to vehicle retrieval function"""
@@ -30,7 +24,7 @@ class SearchInput(graphene.InputObjectType):
                 'long': self.lng, 'year': self.year, 'manufacturer': self.manufacturer,
                 'model': self.model, 'condition': self.condition, 'odometer': self.miles,
                 'type': self.type, 'transmission': self.transmission, 'drive': self.drive,
-                'color': self.color}
+                'color': self.color, 'limit': self.limit}
         to_del = []
         for key, value in data.items():
             if value is None:
