@@ -6,33 +6,32 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-dealers_cache = {}
+dealer_cache = {}
+vehicle_cache = {}
 
 
-def get_vehicle(id, data=None):
+def get_vehicle(iden):
     """Simple function to return Vehicle from Database. Input vehicle id."""
-    if data is not None:
-        resp = data.to_dict()
+    if iden in vehicle_cache:
+        resp = vehicle_cache[iden]
     else:
         try:
             cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
                                           port=os.getenv('PORT'),
                                           host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
-            query = f"""SELECT * FROM vehicles WHERE id = {id}"""
-            if 'limit' in data:
-                query += f"""LIMIT {data['limit']}"""
-                del data['limit']
+            query = f"""SELECT * FROM vehicles WHERE id = {iden}"""
             resp = pd.read_sql(query, cnx).iloc[0].to_dict()
+            vehicle_cache[iden] = resp
         finally:
             cnx.close()
 
     return resp
 
 
-def get_dealer(id, data=None):
+def get_dealer(id):
     """simple function to return dealer. Input dealer ID."""
-    if data is not None:
-        resp = data.to_dict()
+    if id in dealer_cache:
+        resp = dealer_cache[id]
     else:
         try:
             cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
@@ -40,10 +39,7 @@ def get_dealer(id, data=None):
                                           host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
             query = f"""SELECT * FROM dealers WHERE id = '{id}'"""
             resp = pd.read_sql(query, cnx).iloc[0].to_dict()
-            if data is not None:
-                if 'limit' in data:
-                    query += f"""LIMIT {data['limit']}"""
-                    del data['limit']
+            dealer_cache[id] = resp
         finally:
             cnx.close()
 
@@ -112,7 +108,7 @@ def search_function(data):
         vehicle_lists = []
         for i in range(len(sql_return)):
             row = sql_return.iloc[i]
-            vehicle_lists.append(get_vehicle(row['id'], row))
+            vehicle_lists.append(row.to_dict())
         return vehicle_lists
 
     def option_2(long_dd, lat_dd, data):
@@ -126,7 +122,7 @@ def search_function(data):
         vehicle_lists = []
         for i in range(len(sql_return)):
             row = sql_return.iloc[i]
-            vehicle_lists.append(get_vehicle(row['id'], row))
+            vehicle_lists.append(row.to_dict())
         return vehicle_lists
 
     long_dd = data['long']

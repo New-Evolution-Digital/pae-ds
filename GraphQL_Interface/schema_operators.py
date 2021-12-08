@@ -161,5 +161,5 @@ def test_query():
 
 
 if __name__ == "__main__":
-    result = schema.execute(query)
+    result = schema.execute(query2)
     print(result.data)
