@@ -66,18 +66,25 @@ def dealer_query(counties, data):
     return dealers
 
 
-def vehicle_query(ids):
+def vehicle_query(ids, data):
     """function for formatting query and return data from database"""
+    print('this callblock')
     try:
         cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
                                       port=os.getenv('PORT'),
                                       host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
 
-        query_p1 = """SELECT * FROM vehicles WHERE """
+        query_p1 = """SELECT * FROM vehicles WHERE ("""
         query_p2 = """ dealer_ID ="""
         for count in ids['id'][:-1]:
             query_p1 += query_p2 + f""" '{count}' OR"""
         query = query_p1 + query_p2 + ' ' + "'" + str(ids['id'][len(ids) - 1]) + "'"
+        query += ')'
+        if len(data) != 0:
+            and_some = """ AND """
+            for key, value in data.items():
+                query += and_some + key + " = " + f"'{str(value)}'"
+        print('check this query: \n', query)
         data = pd.read_sql(query, cnx)
     finally:
         cnx.close()
@@ -85,7 +92,6 @@ def vehicle_query(ids):
 
 
 def search_function(data):
-    print('found search function')
 
     def option_1(long_dd, lat_dd, data):
         print('made it to the correct function block', data)
@@ -102,7 +108,8 @@ def search_function(data):
                     f"""(SQRT((((c1*69) - {lat_adj}) * ((c1*69) - {lat_adj}))""" \
                     f"""+ (((c2*54.6) - {long_adj})*((c2*54.6) - {long_adj}))) < {final_distance}); """
             ids = pd.read_sql(query, cnx)
-            sql_return = vehicle_query(ids)
+            print(data)
+            sql_return = vehicle_query(ids, data)
         finally:
             cnx.close()
         vehicle_lists = []
@@ -114,11 +121,10 @@ def search_function(data):
     def option_2(long_dd, lat_dd, data):
         """for regional search"""
         radius = data['radius']
-        print('found option 2, :\n', data)
         del data['radius']
         intersect, circle = find_intersecting_counties(lat_dd, long_dd, radius)
         ids = dealer_query(intersect, data)
-        sql_return = vehicle_query(ids)
+        sql_return = vehicle_query(ids, data)
         vehicle_lists = []
         for i in range(len(sql_return)):
             row = sql_return.iloc[i]
