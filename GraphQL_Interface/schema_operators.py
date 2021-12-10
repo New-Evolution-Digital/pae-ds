@@ -39,7 +39,6 @@ class SearchInput(graphene.InputObjectType):
     color = graphene.String(default_value=None)
     limit = graphene.Int(default_value=None)
 
-
     def clean_data(self):
         """cleans data before sending it to vehicle retrieval function"""
         data = {'lat': self.lat, 'search_cat': self.search_cat, 'radius': self.radius,
@@ -59,10 +58,19 @@ class SearchInput(graphene.InputObjectType):
     def search(self):
         data = self.clean_data()
         data['search_cat'] = self.search_cat.name
-        print('check internal search cat: \n',
-              self.search_cat.name)
         final_return = search_function(data)
         return final_return
+
+
+class Dealer(graphene.ObjectType):
+    id = graphene.ID(required=True)
+    name = graphene.String()
+    city = graphene.String()
+    limit = graphene.Int()
+    vehicles = graphene.List(lambda: Vehicle)
+
+    def resolve_vehicles(self, info):
+        return [vehicle_objectify(x) for x in get_vehicle_from_dealer(self['id'])]
 
 
 class Vehicle(graphene.ObjectType):
@@ -79,22 +87,11 @@ class Vehicle(graphene.ObjectType):
     price = graphene.Int()
     cylinders = graphene.String()
     VIN = graphene.String()
-    dealer = graphene.ID()
-    dealer_retrieval = graphene.List(lambda: Dealer)
+    dealer_id = graphene.ID()
+    dealer = graphene.Field(Dealer)
 
-    def resolve_dealer_retrieval(self, info):
-        return [dealer_objectify(get_dealer_from_vehicle(self.dealer))]
-
-
-class Dealer(graphene.ObjectType):
-    id = graphene.ID(required=True)
-    name = graphene.String()
-    city = graphene.String()
-    limit = graphene.Int()
-    vehicles = graphene.List(lambda: Vehicle)
-
-    def resolve_vehicles(self, info):
-        return [vehicle_objectify(x) for x in get_vehicle_from_dealer(self['id'])]
+    def resolve_dealer(self, info):
+        return dealer_objectify(get_dealer_from_vehicle(self.dealer_id))
 
 
 def vehicle_objectify(resp):
@@ -113,7 +110,7 @@ def vehicle_objectify(resp):
         price=resp['price'],
         cylinders=resp['cylinders'],
         VIN=resp['VIN'],
-        dealer=resp['dealer_ID']
+        dealer_id=resp['dealer_ID']
     )
     return vehicle_object
 
@@ -154,7 +151,7 @@ query = """
         name
         vehicles {
             model
-            dealerRetrieval {
+            dealer {
                 name
               }
           }
@@ -174,7 +171,6 @@ query2 = """
     }
 """
 
-
 if __name__ == "__main__":
-    result = schema.execute(query2)
+    result = schema.execute(query)
     print(result.data)

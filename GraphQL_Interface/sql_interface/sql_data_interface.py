@@ -68,7 +68,6 @@ def dealer_query(counties, data):
 
 def vehicle_query(ids, data):
     """function for formatting query and return data from database"""
-    print('this callblock')
     try:
         cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
                                       port=os.getenv('PORT'),
@@ -84,7 +83,6 @@ def vehicle_query(ids, data):
             and_some = """ AND """
             for key, value in data.items():
                 query += and_some + key + " = " + f"'{str(value)}'"
-        print('check this query: \n', query)
         data = pd.read_sql(query, cnx)
     finally:
         cnx.close()
@@ -94,7 +92,6 @@ def vehicle_query(ids, data):
 def search_function(data):
 
     def option_1(long_dd, lat_dd, data):
-        print('made it to the correct function block', data)
         """for basic radius search"""
         lat_adj = (lat_dd * 69)
         long_adj = (long_dd * 54.6)
@@ -108,7 +105,6 @@ def search_function(data):
                     f"""(SQRT((((c1*69) - {lat_adj}) * ((c1*69) - {lat_adj}))""" \
                     f"""+ (((c2*54.6) - {long_adj})*((c2*54.6) - {long_adj}))) < {final_distance}); """
             ids = pd.read_sql(query, cnx)
-            print(data)
             sql_return = vehicle_query(ids, data)
         finally:
             cnx.close()
