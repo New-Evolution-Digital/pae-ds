@@ -143,7 +143,7 @@ query = """
 
 query2 = """
     query something {
-      vehicleSearch(submission: {lat:43.95, lng:-120.54, manufacturer: "toyota", searchCat: "REGION"}) {
+      vehicleSearch(submission: {lat:43.95, lng:-120.54, manufacturer: "toyota", searchCat: "RADIUS"}) {
         searchResult {
           model
           manufacturer
