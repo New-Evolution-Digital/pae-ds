@@ -4,8 +4,27 @@ from GraphQL_Interface.sql_interface.basic_sql_retrievals import get_dealer_from
 from GraphQL_Interface.sql_interface.sql_data_interface import search_function
 
 
+class SearchCat(graphene.Enum):
+    REGION = 1
+    RADIUS = 2
+    FLEX = 3
+
+    @property
+    def description(self):
+        if self == SearchCat.REGION:
+            return 'Regional Search method; finds all counties within a certain radial distance,' \
+                   'then searches those counties for vehicles matchcing the provided features'
+        elif self == SearchCat.RADIUS:
+            return 'Radial search method; finds all vehicles matching feature description provided within' \
+                   'the provided distance'
+        else:
+            return 'Flex Search method; finds all vehicles matching feature description provided within' \
+                   'the provided distance. Additionally, provides vehicles outside of provided radial distance' \
+                   'if the car is inexpensive enough to warrant the additional distance.'
+
+
 class SearchInput(graphene.InputObjectType):
-    search_cat = graphene.String(default_value='REGIONAL')
+    search_cat = SearchCat(required=True)
     radius = graphene.Int(default_value=30)
     lat = graphene.Float(required=True)
     lng = graphene.Float(required=True)
@@ -19,6 +38,7 @@ class SearchInput(graphene.InputObjectType):
     drive = graphene.String(default_value=None)
     color = graphene.String(default_value=None)
     limit = graphene.Int(default_value=None)
+
 
     def clean_data(self):
         """cleans data before sending it to vehicle retrieval function"""
@@ -38,11 +58,11 @@ class SearchInput(graphene.InputObjectType):
     @property
     def search(self):
         data = self.clean_data()
-        if data['search_cat'] != 'RADIUS' and data['search_cat'] != 'REGION' and data['search_cat'] != 'FLEX':
-            return 'Error, search category provided not supported'
+        data['search_cat'] = self.search_cat.name
         print('check internal search cat: \n',
-              self['search_cat'])
-        return [vehicle_objectify(x) for x in search_function(data)]
+              self.search_cat.name)
+        final_return = search_function(data)
+        return final_return
 
 
 class Vehicle(graphene.ObjectType):
@@ -97,6 +117,7 @@ def vehicle_objectify(resp):
     )
     return vehicle_object
 
+
 def dealer_objectify(resp):
     dealer_object = Dealer(
         id=resp['id'],
@@ -143,7 +164,7 @@ query = """
 
 query2 = """
     query something {
-      vehicleSearch(submission: {lat:43.95, lng:-120.54, manufacturer: "toyota", searchCat: "RADIUS"}) {
+      vehicleSearch(submission: {lat:43.95, lng:-120.54, manufacturer: "toyota" searchCat: RADIUS}) {
         searchResult {
           model
           manufacturer
@@ -152,12 +173,6 @@ query2 = """
       }
     }
 """
-
-
-def test_query():
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == {"vehicleCompare": {"latlng": "(32.2,12.0)"}}
 
 
 if __name__ == "__main__":
