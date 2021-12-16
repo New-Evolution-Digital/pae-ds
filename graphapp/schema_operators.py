@@ -1,7 +1,7 @@
 import graphene
-from GraphQL_Interface.sql_interface.sql_data_interface import get_vehicle, get_dealer
-from GraphQL_Interface.sql_interface.basic_sql_retrievals import get_dealer_from_vehicle, get_vehicle_from_dealer
-from GraphQL_Interface.sql_interface.sql_data_interface import search_function
+from sql_interface.sql_data_interface import get_vehicle, get_dealer
+from sql_interface.basic_sql_retrievals import get_dealer_from_vehicle, get_vehicle_from_dealer
+from sql_interface.sql_data_interface import search_function
 
 
 class SearchCat(graphene.Enum):

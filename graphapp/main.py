@@ -1,7 +1,8 @@
 # flask_sqlalchemy/app.py
 from flask import Flask
 from graphql_server.flask import GraphQLView
-from GraphQL_Interface.schema_operators import schema
+from schema_operators import schema
+import gunicorn
 
 app = Flask(__name__)
 app.debug = True
@@ -16,4 +17,4 @@ app.add_url_rule(
 )
 
 if __name__ == '__main__':
-    app.run()
+    gunicorn.run(app)

@@ -1,5 +1,5 @@
 import pandas as pd
-from GraphQL_Interface.map_data.circle_intersection_functions import find_intersecting_counties
+from map_data.circle_intersection_functions import find_intersecting_counties
 import mysql.connector
 import os
 from dotenv import load_dotenv
