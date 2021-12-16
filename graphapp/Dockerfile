@@ -11,11 +11,9 @@ RUN pip3 install --no-cache-dir -q -r /tmp/requirements.txt
 
 # Add our code
 ADD ./ /opt/graphapp
-
-
+WORKDIR /opt/graphapp
 
 # Expose is NOT supported by Heroku
-# EXPOSE 5000
 
 # Run the image as a non-root user
 #RUN adduser -D endpointuser
@@ -23,5 +21,5 @@ ADD ./ /opt/graphapp
 
 # Run the app.  CMD is required to run on Heroku
 # $PORT is set by Heroku
-CMD uvicorn --bind 0.0.0.0:80 asgi
-CMD uvicorn --app-dir /opt/graphapp main:app --host 0.0.0.0 --port 80
+CMD gunicorn --bind 0.0.0.0:$PORT main:app
+#CMD gunicorn main:app --host 0.0.0.0 --port $PORT
