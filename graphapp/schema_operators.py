@@ -158,7 +158,7 @@ query = """
       }
     }
 """
-
+#mysql -h mysql–instance1.123456789012.us-east-1.rds.amazonaws.com --ssl-ca=global-bundle.pem -P 3306 -u mymasteruser -p
 query2 = """
     query something {
       vehicleSearch(submission: {lat:43.95, lng:-120.54, manufacturer: "toyota" searchCat: RADIUS}) {

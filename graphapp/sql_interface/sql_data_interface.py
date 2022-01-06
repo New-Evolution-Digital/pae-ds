@@ -17,8 +17,10 @@ def get_vehicle(iden):
     else:
         try:
             cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
-                                          port=os.getenv('PORT'),
-                                          host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
+                                          port=os.getenv('PORT_NUMBER'),
+                                          host=os.getenv('HOST'),
+                                          password=os.getenv('PASSWORD'),
+                                          ssl_ca=os.getenv('SSL'))
             query = f"""SELECT * FROM vehicles WHERE id = {iden}"""
             resp = pd.read_sql(query, cnx).iloc[0].to_dict()
             vehicle_cache[iden] = resp
@@ -35,8 +37,10 @@ def get_dealer(id):
     else:
         try:
             cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
-                                          port=os.getenv('PORT'),
-                                          host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
+                                          port=os.getenv('PORT_NUMBER'),
+                                          host=os.getenv('HOST'),
+                                          password=os.getenv('PASSWORD'),
+                                          ssl_ca=os.getenv('SSL'))
             query = f"""SELECT * FROM dealers WHERE id = '{id}'"""
             resp = pd.read_sql(query, cnx).iloc[0].to_dict()
             dealer_cache[id] = resp
@@ -50,8 +54,10 @@ def dealer_query(counties, data):
     """function for formatting query"""
     try:
         cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
-                                      port=os.getenv('PORT'),
-                                      host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
+                                      port=os.getenv('PORT_NUMBER'),
+                                      host=os.getenv('HOST'),
+                                      password=os.getenv('PASSWORD'),
+                                      ssl_ca=os.getenv('SSL'))
         query_p1 = """SELECT * FROM dealers WHERE"""
         query_p2 = """ county ="""
         for count in counties:
@@ -70,8 +76,10 @@ def vehicle_query(ids, data):
     """function for formatting query and return data from database"""
     try:
         cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
-                                      port=os.getenv('PORT'),
-                                      host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
+                                      port=os.getenv('PORT_NUMBER'),
+                                      host=os.getenv('HOST'),
+                                      password=os.getenv('PASSWORD'),
+                                      ssl_ca=os.getenv('SSL'))
 
         query_p1 = """SELECT * FROM vehicles WHERE ("""
         query_p2 = """ dealer_ID ="""
@@ -99,8 +107,10 @@ def search_function(data):
         del data['radius']
         try:
             cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
-                                          port=os.getenv('PORT'),
-                                          host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
+                                          port=os.getenv('PORT_NUMBER'),
+                                          host=os.getenv('HOST'),
+                                          password=os.getenv('PASSWORD'),
+                                          ssl_ca=os.getenv('SSL'))
             query = f"""SELECT * FROM dealers WHERE """ \
                     f"""(SQRT((((c1*69) - {lat_adj}) * ((c1*69) - {lat_adj}))""" \
                     f"""+ (((c2*54.6) - {long_adj})*((c2*54.6) - {long_adj}))) < {final_distance}); """

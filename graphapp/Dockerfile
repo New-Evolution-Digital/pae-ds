@@ -8,16 +8,12 @@ ADD ./requirements.txt /tmp/requirements.txt
 
 # Install dependencies
 RUN pip3 install --no-cache-dir -q -r /tmp/requirements.txt
-
+RUN useradd -m myuser
+USER myuser
 # Add our code
 ADD ./ /opt/graphapp
 WORKDIR /opt/graphapp
-
-# Expose is NOT supported by Heroku
-
-# Run the image as a non-root user
-#RUN adduser -D endpointuser
-#USER endpointuser
+ENV heroku config
 
 # Run the app.  CMD is required to run on Heroku
 # $PORT is set by Heroku

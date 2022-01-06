@@ -131,3 +131,4 @@ dmypy.json
 
 #random data
 data/data_creation_experiments.ipynb
+graphapp/config

@@ -16,8 +16,9 @@ def get_vehicle_from_dealer(id, limit=None):
     else:
         try:
             cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
-                                          port=os.getenv('PORT'),
-                                          host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
+                                          port=os.getenv('PORT_NUMBER'),
+                                          host=os.getenv('HOST'), password=os.getenv('PASSWORD'),
+                                          ssl_ca=os.getenv('SSL'))
             query = f"""SELECT * FROM vehicles WHERE dealer_ID = '{id}'"""
             if limit is not None:
                 query += f"""LIMIT {limit}"""
@@ -39,8 +40,9 @@ def get_dealer_from_vehicle(id):
     else:
         try:
             cnx = mysql.connector.connect(user=os.getenv('USERNAME'), database=os.getenv('DATABASE'),
-                                          port=os.getenv('PORT'),
-                                          host=os.getenv('HOST'), password=os.getenv('PASSWORD'))
+                                          port=os.getenv('PORT_NUMBER'),
+                                          host=os.getenv('HOST'), password=os.getenv('PASSWORD'),
+                                          ssl_ca=os.getenv('SSL'))
             query = f"""SELECT * FROM dealers WHERE id = '{id}'"""
             resp = pd.read_sql(query, cnx).iloc[0].to_dict()
             dealer_cache[id] = resp
